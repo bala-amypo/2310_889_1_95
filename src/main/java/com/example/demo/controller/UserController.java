@@ -2,18 +2,50 @@ package com.example.demo.controller;
 
 import com.example.demo.model.User;
 import com.example.demo.service.UserService;
-import com.example.demo.service.impl.UserServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+@RestController
+@RequestMapping("/users")
+@Tag(name = "User API", description = "CRUD operations for User")
 public class UserController {
-    public static void main(String[] args) {
-        UserService service = new UserServiceImpl();
 
-        service.createUser(new User(1L, "Alice", "alice@gmail.com", "1234", "USER"));
-        System.out.println(service.getUserById(1L).getName());
+    private final UserService service;
 
-        service.updateUser(1L, new User(1L, "Alice Updated", "alice@gmail.com", "1234", "USER"));
-        service.getAllUsers().forEach(u -> System.out.println(u.getName()));
+    public UserController(UserService service) {
+        this.service = service;
+    }
 
-        service.deleteUser(1L);
+    @PostMapping
+    @Operation(summary = "Create User")
+    public User create(@RequestBody User u) {
+        return service.create(u);
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Get User by ID")
+    public User get(@PathVariable Long id) {
+        return service.get(id);
+    }
+
+    @GetMapping
+    @Operation(summary = "Get All Users")
+    public List<User> getAll() {
+        return service.getAll();
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Update User")
+    public User update(@PathVariable Long id, @RequestBody User u) {
+        return service.update(id, u);
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Delete User")
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
     }
 }
