@@ -34,7 +34,7 @@ public class BudgetPlan {
         return user;
     }
 
-    public void setUser(User user) {   // ✅ REQUIRED
+    public void setUser(User user) {
         this.user = user;
     }
 

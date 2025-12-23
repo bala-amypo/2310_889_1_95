@@ -35,7 +35,7 @@ public class BudgetSummary {
         return budgetPlan;
     }
 
-    public void setBudgetPlan(BudgetPlan budgetPlan) { // ✅ REQUIRED
+    public void setBudgetPlan(BudgetPlan budgetPlan) {
         this.budgetPlan = budgetPlan;
     }
 
