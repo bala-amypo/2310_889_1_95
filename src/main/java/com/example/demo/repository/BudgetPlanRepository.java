@@ -1,10 +1,14 @@
-package com.example.demo.service;
+package com.example.demo.repository;
 
 import com.example.demo.model.BudgetPlan;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface BudgetPlanService {
+import java.util.Optional;
 
-    BudgetPlan save(BudgetPlan plan);
+public interface BudgetPlanRepository
+        extends JpaRepository<BudgetPlan, Long> {
 
-    BudgetPlan get(Long userId, Integer month, Integer year);
+    Optional<BudgetPlan> findByUserIdAndMonthAndYear(
+            Long userId, Integer month, Integer year
+    );
 }
