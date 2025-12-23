@@ -3,6 +3,8 @@ package com.example.demo.service;
 import com.example.demo.model.BudgetSummary;
 
 public interface BudgetSummaryService {
-    BudgetSummary generate(Long planId);
-    BudgetSummary get(Long planId);
+
+    BudgetSummary save(BudgetSummary summary);
+
+    BudgetSummary get(Long budgetPlanId);
 }
