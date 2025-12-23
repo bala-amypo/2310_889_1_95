@@ -4,13 +4,15 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "budget_summaries")
 public class BudgetSummary {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne
+    @JoinColumn(name = "budget_plan_id")
     private BudgetPlan budgetPlan;
 
     private Double totalIncome;
@@ -20,21 +22,52 @@ public class BudgetSummary {
 
     public BudgetSummary() {}
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    // getters & setters
+    public Long getId() {
+        return id;
+    }
 
-    public BudgetPlan getBudgetPlan() { return budgetPlan; }
-    public void setBudgetPlan(BudgetPlan budgetPlan) { this.budgetPlan = budgetPlan; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public Double getTotalIncome() { return totalIncome; }
-    public void setTotalIncome(Double totalIncome) { this.totalIncome = totalIncome; }
+    public BudgetPlan getBudgetPlan() {
+        return budgetPlan;
+    }
 
-    public Double getTotalExpense() { return totalExpense; }
-    public void setTotalExpense(Double totalExpense) { this.totalExpense = totalExpense; }
+    public void setBudgetPlan(BudgetPlan budgetPlan) { // ✅ REQUIRED
+        this.budgetPlan = budgetPlan;
+    }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public Double getTotalIncome() {
+        return totalIncome;
+    }
 
-    public LocalDateTime getGeneratedAt() { return generatedAt; }
-    public void setGeneratedAt(LocalDateTime generatedAt) { this.generatedAt = generatedAt; }
+    public void setTotalIncome(Double totalIncome) {
+        this.totalIncome = totalIncome;
+    }
+
+    public Double getTotalExpense() {
+        return totalExpense;
+    }
+
+    public void setTotalExpense(Double totalExpense) {
+        this.totalExpense = totalExpense;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getGeneratedAt() {
+        return generatedAt;
+    }
+
+    public void setGeneratedAt(LocalDateTime generatedAt) {
+        this.generatedAt = generatedAt;
+    }
 }

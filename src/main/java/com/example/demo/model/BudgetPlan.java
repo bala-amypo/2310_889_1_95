@@ -3,13 +3,15 @@ package com.example.demo.model;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "budget_plans")
 public class BudgetPlan {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
     private Integer month;
@@ -19,21 +21,52 @@ public class BudgetPlan {
 
     public BudgetPlan() {}
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    // getters & setters
+    public Long getId() {
+        return id;
+    }
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public Integer getMonth() { return month; }
-    public void setMonth(Integer month) { this.month = month; }
+    public User getUser() {
+        return user;
+    }
 
-    public Integer getYear() { return year; }
-    public void setYear(Integer year) { this.year = year; }
+    public void setUser(User user) {   // ✅ REQUIRED
+        this.user = user;
+    }
 
-    public Double getIncomeTarget() { return incomeTarget; }
-    public void setIncomeTarget(Double incomeTarget) { this.incomeTarget = incomeTarget; }
+    public Integer getMonth() {
+        return month;
+    }
 
-    public Double getExpenseLimit() { return expenseLimit; }
-    public void setExpenseLimit(Double expenseLimit) { this.expenseLimit = expenseLimit; }
+    public void setMonth(Integer month) {
+        this.month = month;
+    }
+
+    public Integer getYear() {
+        return year;
+    }
+
+    public void setYear(Integer year) {
+        this.year = year;
+    }
+
+    public Double getIncomeTarget() {
+        return incomeTarget;
+    }
+
+    public void setIncomeTarget(Double incomeTarget) {
+        this.incomeTarget = incomeTarget;
+    }
+
+    public Double getExpenseLimit() {
+        return expenseLimit;
+    }
+
+    public void setExpenseLimit(Double expenseLimit) {
+        this.expenseLimit = expenseLimit;
+    }
 }
