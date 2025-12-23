@@ -1,16 +1,26 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.model.Category;
-import com.example.demo.repository.CategoryRepository;
-import com.example.demo.service.CategoryService;
+import org.springframework.stereotype.Service;
 import java.util.List;
 
-public class CategoryServiceImpl implements CategoryService {
-    private final CategoryRepository repo = new CategoryRepository();
+import com.example.demo.repository.CategoryRepository;
+import com.example.demo.model.Category;
+import com.example.demo.service.CategoryService;
 
-    public Category createCategory(Category c) { return repo.save(c); }
-    public Category getCategoryById(Long id) { return repo.findById(id); }
-    public List<Category> getAllCategories() { return repo.findAll(); }
-    public Category updateCategory(Long id, Category c) { return repo.update(id, c); }
-    public void deleteCategory(Long id) { repo.deleteById(id); }
+@Service
+public class CategoryServiceImpl implements CategoryService {
+
+    private final CategoryRepository repo;
+
+    public CategoryServiceImpl(CategoryRepository repo) {
+        this.repo = repo;
+    }
+
+    public Category create(Category category) {
+        return repo.save(category);
+    }
+
+    public List<Category> getAll() {
+        return repo.findAll();
+    }
 }

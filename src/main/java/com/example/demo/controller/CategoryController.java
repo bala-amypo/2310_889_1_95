@@ -1,19 +1,33 @@
 package com.example.demo.controller;
 
+import io.swagger.v3.oas.annotations.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+
 import com.example.demo.model.Category;
 import com.example.demo.service.CategoryService;
-import com.example.demo.service.impl.CategoryServiceImpl;
 
+@RestController
+@RequestMapping("/categories")
+@Tag(name = "Category APIs")
 public class CategoryController {
-    public static void main(String[] args) {
-        CategoryService service = new CategoryServiceImpl();
 
-        service.createCategory(new Category(1L, "Food", "EXPENSE"));
-        System.out.println(service.getCategoryById(1L).getName());
+    private final CategoryService service;
 
-        service.updateCategory(1L, new Category(1L, "Groceries", "EXPENSE"));
-        service.getAllCategories().forEach(c -> System.out.println(c.getName()));
+    public CategoryController(CategoryService service) {
+        this.service = service;
+    }
 
-        service.deleteCategory(1L);
+    @Operation(summary = "Create category")
+    @PostMapping
+    public Category create(@RequestBody Category category) {
+        return service.create(category);
+    }
+
+    @Operation(summary = "Get all categories")
+    @GetMapping
+    public List<Category> getAll() {
+        return service.getAll();
     }
 }

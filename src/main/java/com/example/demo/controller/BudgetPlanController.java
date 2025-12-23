@@ -1,24 +1,34 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.*;
+import io.swagger.v3.oas.annotations.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.web.bind.annotation.*;
+
+import com.example.demo.model.BudgetPlan;
 import com.example.demo.service.BudgetPlanService;
-import com.example.demo.service.impl.BudgetPlanServiceImpl;
 
+@RestController
+@RequestMapping("/budgets")
+@Tag(name = "Budget Plan APIs")
 public class BudgetPlanController {
-    public static void main(String[] args) {
-        BudgetPlanService service = new BudgetPlanServiceImpl();
 
-        User user = new User(1L, "Sam", "sam@gmail.com", "pass", "USER");
+    private final BudgetPlanService service;
 
-        BudgetPlan plan = new BudgetPlan(1L, user, 9, 2025, 80000, 40000);
-        service.createBudgetPlan(plan);
+    public BudgetPlanController(BudgetPlanService service) {
+        this.service = service;
+    }
 
-        System.out.println(service.getBudgetPlanById(1L).getIncomeTarget());
+    @Operation(summary = "Create budget plan")
+    @PostMapping("/{userId}")
+    public BudgetPlan create(@PathVariable Long userId, @RequestBody BudgetPlan plan) {
+        return service.create(userId, plan);
+    }
 
-        plan.setExpenseLimit(35000);
-        service.updateBudgetPlan(1L, plan);
-
-        service.getAllBudgetPlans().forEach(p -> System.out.println(p.getMonth()));
-        service.deleteBudgetPlan(1L);
+    @Operation(summary = "Get budget plan")
+    @GetMapping("/{userId}/{month}/{year}")
+    public BudgetPlan get(@PathVariable Long userId,
+                          @PathVariable Integer month,
+                          @PathVariable Integer year) {
+        return service.get(userId, month, year);
     }
 }
