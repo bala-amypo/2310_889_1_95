@@ -1,38 +1,40 @@
 package com.example.demo.controller;
 
+import com.example.demo.model.BudgetPlan;
 import com.example.demo.model.BudgetSummary;
+import com.example.demo.repository.BudgetPlanRepository;
 import com.example.demo.repository.BudgetSummaryRepository;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/budget-summaries")
+@RequestMapping("/summary")
 public class BudgetSummaryController {
 
-    private final BudgetSummaryRepository repository;
+    private final BudgetSummaryRepository summaryRepo;
+    private final BudgetPlanRepository planRepo;
 
-    public BudgetSummaryController(BudgetSummaryRepository repository) {
-        this.repository = repository;
+    public BudgetSummaryController(BudgetSummaryRepository summaryRepo,
+                                   BudgetPlanRepository planRepo) {
+        this.summaryRepo = summaryRepo;
+        this.planRepo = planRepo;
     }
 
-    @PostMapping
-    public BudgetSummary create(@RequestBody BudgetSummary summary) {
-        return repository.save(summary);
+    // POST /summary/generate/{budgetPlanId}
+    @PostMapping("/generate/{budgetPlanId}")
+    public BudgetSummary generateSummary(@PathVariable Long budgetPlanId) {
+        BudgetPlan plan = planRepo.findById(budgetPlanId).orElseThrow();
+
+        BudgetSummary summary = new BudgetSummary();
+        summary.setBudgetPlan(plan);
+        summary.setTotalIncome(plan.getIncomeTarget());
+        summary.setTotalExpense(plan.getExpenseLimit());
+
+        return summaryRepo.save(summary);
     }
 
-    @GetMapping
-    public List<BudgetSummary> getAll() {
-        return repository.findAll();
-    }
-
-    @GetMapping("/{id}")
-    public BudgetSummary getById(@PathVariable Long id) {
-        return repository.findById(id).orElse(null);
-    }
-
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        repository.deleteById(id);
+    // GET /summary/{budgetPlanId}
+    @GetMapping("/{budgetPlanId}")
+    public BudgetSummary getSummary(@PathVariable Long budgetPlanId) {
+        return summaryRepo.findByBudgetPlanId(budgetPlanId);
     }
 }

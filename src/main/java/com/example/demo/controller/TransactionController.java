@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.TransactionLog;
+import com.example.demo.model.User;
 import com.example.demo.repository.TransactionLogRepository;
+import com.example.demo.repository.UserRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,24 +12,28 @@ import java.util.List;
 @RequestMapping("/transactions")
 public class TransactionController {
 
-    private final TransactionLogRepository repository;
+    private final TransactionLogRepository transactionRepo;
+    private final UserRepository userRepo;
 
-    public TransactionController(TransactionLogRepository repository) {
-        this.repository = repository;
+    public TransactionController(TransactionLogRepository transactionRepo,
+                                 UserRepository userRepo) {
+        this.transactionRepo = transactionRepo;
+        this.userRepo = userRepo;
     }
 
-    @PostMapping
-    public TransactionLog create(@RequestBody TransactionLog log) {
-        return repository.save(log);
+    // POST /transactions/{userId}
+    @PostMapping("/{userId}")
+    public TransactionLog addTransaction(@PathVariable Long userId,
+                                         @RequestBody TransactionLog tx) {
+        User user = userRepo.findById(userId).orElseThrow();
+        tx.setUser(user);
+        return transactionRepo.save(tx);
     }
 
-    @GetMapping
-    public List<TransactionLog> getAll() {
-        return repository.findAll();
-    }
-
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        repository.deleteById(id);
+    // GET /transactions/user/{userId}
+    @GetMapping("/user/{userId}")
+    public List<TransactionLog> getUserTransactions(@PathVariable Long userId) {
+        User user = userRepo.findById(userId).orElseThrow();
+        return transactionRepo.findByUser(user);
     }
 }

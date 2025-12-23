@@ -1,44 +1,38 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.BudgetPlan;
+import com.example.demo.model.User;
 import com.example.demo.repository.BudgetPlanRepository;
+import com.example.demo.repository.UserRepository;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/budget-plans")
+@RequestMapping("/budgets")
 public class BudgetPlanController {
 
-    private final BudgetPlanRepository repository;
+    private final BudgetPlanRepository budgetRepo;
+    private final UserRepository userRepo;
 
-    public BudgetPlanController(BudgetPlanRepository repository) {
-        this.repository = repository;
+    public BudgetPlanController(BudgetPlanRepository budgetRepo,
+                                UserRepository userRepo) {
+        this.budgetRepo = budgetRepo;
+        this.userRepo = userRepo;
     }
 
-    @PostMapping
-    public BudgetPlan create(@RequestBody BudgetPlan plan) {
-        return repository.save(plan);
+    // POST /budgets/{userId}
+    @PostMapping("/{userId}")
+    public BudgetPlan createBudget(@PathVariable Long userId,
+                                   @RequestBody BudgetPlan plan) {
+        User user = userRepo.findById(userId).orElseThrow();
+        plan.setUser(user);
+        return budgetRepo.save(plan);
     }
 
-    @GetMapping
-    public List<BudgetPlan> getAll() {
-        return repository.findAll();
-    }
-
-    @GetMapping("/{id}")
-    public BudgetPlan getById(@PathVariable Long id) {
-        return repository.findById(id).orElse(null);
-    }
-
-    @PutMapping("/{id}")
-    public BudgetPlan update(@PathVariable Long id, @RequestBody BudgetPlan plan) {
-        plan.setId(id);
-        return repository.save(plan);
-    }
-
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        repository.deleteById(id);
+    // GET /budgets/{userId}/{month}/{year}
+    @GetMapping("/{userId}/{month}/{year}")
+    public BudgetPlan getBudget(@PathVariable Long userId,
+                                @PathVariable int month,
+                                @PathVariable int year) {
+        return budgetRepo.findByUserIdAndMonthAndYear(userId, month, year);
     }
 }
