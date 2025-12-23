@@ -1,7 +1,13 @@
-import com.example.demo.repository.TransactionLogRepository;
+package com.example.demo.repository;
 
-private final TransactionLogRepository repository;
+import com.example.demo.model.TransactionLog;
+import com.example.demo.model.User;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public TransactionController(TransactionLogRepository repository) {
-    this.repository = repository;
+import java.util.List;
+
+public interface TransactionLogRepository extends JpaRepository<TransactionLog, Long> {
+
+    List<TransactionLog> findByUser(User user);
+
 }
