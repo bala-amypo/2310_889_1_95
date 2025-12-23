@@ -15,14 +15,14 @@ public class BudgetPlanServiceImpl implements BudgetPlanService {
     }
 
     @Override
-    public BudgetPlan save(BudgetPlan plan) {
+    public BudgetPlan create(Long userId, BudgetPlan plan) {
+        plan.setUserId(userId);
         return repo.save(plan);
     }
 
     @Override
     public BudgetPlan get(Long userId, Integer month, Integer year) {
-        return repo
-                .findByUserIdAndMonthAndYear(userId, month, year)
+        return repo.findByUserIdAndMonthAndYear(userId, month, year)
                 .orElse(null);
     }
 }
