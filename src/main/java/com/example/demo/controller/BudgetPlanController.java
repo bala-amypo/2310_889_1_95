@@ -25,20 +25,4 @@ public class BudgetPlanController {
     public List<BudgetPlan> getAll() {
         return repository.findAll();
     }
-
-    @GetMapping("/{id}")
-    public BudgetPlan getById(@PathVariable Long id) {
-        return repository.findById(id).orElse(null);
-    }
-
-    @PutMapping("/{id}")
-    public BudgetPlan update(@PathVariable Long id, @RequestBody BudgetPlan plan) {
-        plan.setId(id);
-        return repository.save(plan);
-    }
-
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        repository.deleteById(id);
-    }
 }
