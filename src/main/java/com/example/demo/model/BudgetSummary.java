@@ -19,4 +19,7 @@ public class BudgetSummary {
     private LocalDateTime generatedAt;
 
     public BudgetSummary() {}
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 }
