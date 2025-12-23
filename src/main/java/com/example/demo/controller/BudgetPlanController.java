@@ -1,34 +1,44 @@
 package com.example.demo.controller;
 
-import io.swagger.v3.oas.annotations.Tag;
-import io.swagger.v3.oas.annotations.Operation;
+import com.example.demo.model.BudgetPlan;
+import com.example.demo.repository.BudgetPlanRepository;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.demo.model.BudgetPlan;
-import com.example.demo.service.BudgetPlanService;
+import java.util.List;
 
 @RestController
-@RequestMapping("/budgets")
-@Tag(name = "Budget Plan APIs")
+@RequestMapping("/budget-plans")
 public class BudgetPlanController {
 
-    private final BudgetPlanService service;
+    private final BudgetPlanRepository repository;
 
-    public BudgetPlanController(BudgetPlanService service) {
-        this.service = service;
+    public BudgetPlanController(BudgetPlanRepository repository) {
+        this.repository = repository;
     }
 
-    @Operation(summary = "Create budget plan")
-    @PostMapping("/{userId}")
-    public BudgetPlan create(@PathVariable Long userId, @RequestBody BudgetPlan plan) {
-        return service.create(userId, plan);
+    @PostMapping
+    public BudgetPlan create(@RequestBody BudgetPlan plan) {
+        return repository.save(plan);
     }
 
-    @Operation(summary = "Get budget plan")
-    @GetMapping("/{userId}/{month}/{year}")
-    public BudgetPlan get(@PathVariable Long userId,
-                          @PathVariable Integer month,
-                          @PathVariable Integer year) {
-        return service.get(userId, month, year);
+    @GetMapping
+    public List<BudgetPlan> getAll() {
+        return repository.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public BudgetPlan getById(@PathVariable Long id) {
+        return repository.findById(id).orElse(null);
+    }
+
+    @PutMapping("/{id}")
+    public BudgetPlan update(@PathVariable Long id, @RequestBody BudgetPlan plan) {
+        plan.setId(id);
+        return repository.save(plan);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        repository.deleteById(id);
     }
 }

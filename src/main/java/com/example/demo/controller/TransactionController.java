@@ -1,33 +1,33 @@
 package com.example.demo.controller;
 
-import io.swagger.v3.oas.annotations.Tag;
-import io.swagger.v3.oas.annotations.Operation;
-import org.springframework.web.bind.annotation.*;
-import java.util.List;
-
 import com.example.demo.model.TransactionLog;
-import com.example.demo.service.TransactionService;
+import com.example.demo.repository.TransactionRepository;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/transactions")
-@Tag(name = "Transaction APIs")
 public class TransactionController {
 
-    private final TransactionService service;
+    private final TransactionRepository repository;
 
-    public TransactionController(TransactionService service) {
-        this.service = service;
+    public TransactionController(TransactionRepository repository) {
+        this.repository = repository;
     }
 
-    @Operation(summary = "Add transaction")
-    @PostMapping("/{userId}")
-    public TransactionLog add(@PathVariable Long userId, @RequestBody TransactionLog log) {
-        return service.add(userId, log);
+    @PostMapping
+    public TransactionLog create(@RequestBody TransactionLog log) {
+        return repository.save(log);
     }
 
-    @Operation(summary = "Get user transactions")
-    @GetMapping("/user/{userId}")
-    public List<TransactionLog> get(@PathVariable Long userId) {
-        return service.getByUser(userId);
+    @GetMapping
+    public List<TransactionLog> getAll() {
+        return repository.findAll();
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        repository.deleteById(id);
     }
 }

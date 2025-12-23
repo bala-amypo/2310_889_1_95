@@ -1,32 +1,38 @@
 package com.example.demo.controller;
 
-import io.swagger.v3.oas.annotations.Tag;
-import io.swagger.v3.oas.annotations.Operation;
+import com.example.demo.model.BudgetSummary;
+import com.example.demo.repository.BudgetSummaryRepository;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.demo.model.BudgetSummary;
-import com.example.demo.service.BudgetSummaryService;
+import java.util.List;
 
 @RestController
-@RequestMapping("/summary")
-@Tag(name = "Budget Summary APIs")
+@RequestMapping("/budget-summaries")
 public class BudgetSummaryController {
 
-    private final BudgetSummaryService service;
+    private final BudgetSummaryRepository repository;
 
-    public BudgetSummaryController(BudgetSummaryService service) {
-        this.service = service;
+    public BudgetSummaryController(BudgetSummaryRepository repository) {
+        this.repository = repository;
     }
 
-    @Operation(summary = "Generate summary")
-    @PostMapping("/generate/{planId}")
-    public BudgetSummary generate(@PathVariable Long planId) {
-        return service.generate(planId);
+    @PostMapping
+    public BudgetSummary create(@RequestBody BudgetSummary summary) {
+        return repository.save(summary);
     }
 
-    @Operation(summary = "Get summary")
-    @GetMapping("/{planId}")
-    public BudgetSummary get(@PathVariable Long planId) {
-        return service.get(planId);
+    @GetMapping
+    public List<BudgetSummary> getAll() {
+        return repository.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public BudgetSummary getById(@PathVariable Long id) {
+        return repository.findById(id).orElse(null);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        repository.deleteById(id);
     }
 }

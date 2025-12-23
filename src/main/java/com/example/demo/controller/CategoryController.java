@@ -1,33 +1,33 @@
 package com.example.demo.controller;
 
-import io.swagger.v3.oas.annotations.Tag;
-import io.swagger.v3.oas.annotations.Operation;
-import org.springframework.web.bind.annotation.*;
-import java.util.List;
-
 import com.example.demo.model.Category;
-import com.example.demo.service.CategoryService;
+import com.example.demo.repository.CategoryRepository;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/categories")
-@Tag(name = "Category APIs")
 public class CategoryController {
 
-    private final CategoryService service;
+    private final CategoryRepository repository;
 
-    public CategoryController(CategoryService service) {
-        this.service = service;
+    public CategoryController(CategoryRepository repository) {
+        this.repository = repository;
     }
 
-    @Operation(summary = "Create category")
     @PostMapping
     public Category create(@RequestBody Category category) {
-        return service.create(category);
+        return repository.save(category);
     }
 
-    @Operation(summary = "Get all categories")
     @GetMapping
     public List<Category> getAll() {
-        return service.getAll();
+        return repository.findAll();
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        repository.deleteById(id);
     }
 }
