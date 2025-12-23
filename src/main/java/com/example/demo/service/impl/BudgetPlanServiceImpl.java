@@ -22,7 +22,7 @@ public class BudgetPlanServiceImpl implements BudgetPlanService {
     @Override
     public BudgetPlan create(Long userId, BudgetPlan plan) {
         User user = userRepo.findById(userId).orElse(null);
-        plan.setUser(user);   // ✅ correct
+        plan.setUser(user);
         return repo.save(plan);
     }
 

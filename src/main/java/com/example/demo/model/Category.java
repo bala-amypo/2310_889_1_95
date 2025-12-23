@@ -13,11 +13,10 @@ public class Category {
     @Column(unique = true)
     private String name;
 
-    private String type; // INCOME / EXPENSE
+    private String type;
 
     public Category() {}
 
-    // getters & setters
     public Long getId() {
         return id;
     }

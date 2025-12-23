@@ -22,7 +22,6 @@ public class BudgetSummary {
 
     public BudgetSummary() {}
 
-    // getters & setters
     public Long getId() {
         return id;
     }

@@ -38,7 +38,7 @@ public class TransactionLog {
         return user;
     }
 
-    public void setUser(User user) {   // ✅ THIS FIXES YOUR ERROR
+    public void setUser(User user) {
         this.user = user;
     }
 
