@@ -21,19 +21,18 @@ public class TransactionController {
         this.userRepo = userRepo;
     }
 
-    // POST /transactions/{userId}
     @PostMapping("/{userId}")
-    public TransactionLog addTransaction(@PathVariable Long userId,
-                                         @RequestBody TransactionLog tx) {
-        User user = userRepo.findById(userId).orElseThrow();
-        tx.setUser(user);
-        return transactionRepo.save(tx);
+    public TransactionLog create(@PathVariable Long userId,
+                                 @RequestBody TransactionLog log) {
+
+        User user = userRepo.findById(userId).orElse(null);
+        log.setUser(user);
+        return transactionRepo.save(log);
     }
 
-    // GET /transactions/user/{userId}
     @GetMapping("/user/{userId}")
-    public List<TransactionLog> getUserTransactions(@PathVariable Long userId) {
-        User user = userRepo.findById(userId).orElseThrow();
+    public List<TransactionLog> getByUser(@PathVariable Long userId) {
+        User user = userRepo.findById(userId).orElse(null);
         return transactionRepo.findByUser(user);
     }
 }

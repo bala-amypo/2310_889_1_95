@@ -1,18 +1,26 @@
 package com.example.demo.controller;
 
+import com.example.demo.model.User;
+import com.example.demo.repository.UserRepository;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
+    private final UserRepository userRepo;
+
+    public AuthController(UserRepository userRepo) {
+        this.userRepo = userRepo;
+    }
+
     @PostMapping("/register")
-    public String register() {
-        return "User registered successfully";
+    public User register(@RequestBody User user) {
+        return userRepo.save(user);
     }
 
     @PostMapping("/login")
-    public String login() {
-        return "User logged in successfully";
+    public User login(@RequestBody User user) {
+        return userRepo.findByEmail(user.getEmail());
     }
 }

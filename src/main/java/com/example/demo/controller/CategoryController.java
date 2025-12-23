@@ -10,19 +10,19 @@ import java.util.List;
 @RequestMapping("/categories")
 public class CategoryController {
 
-    private final CategoryRepository repository;
+    private final CategoryRepository repo;
 
-    public CategoryController(CategoryRepository repository) {
-        this.repository = repository;
+    public CategoryController(CategoryRepository repo) {
+        this.repo = repo;
     }
 
     @PostMapping
     public Category create(@RequestBody Category category) {
-        return repository.save(category);
+        return repo.save(category);
     }
 
     @GetMapping
     public List<Category> getAll() {
-        return repository.findAll();
+        return repo.findAll();
     }
 }
