@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.TransactionLog;
-import com.example.demo.repository.TransactionRepository;
+import com.example.demo.repository.TransactionLogRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,9 +10,9 @@ import java.util.List;
 @RequestMapping("/transactions")
 public class TransactionController {
 
-    private final TransactionRepository repository;
+    private final TransactionLogRepository repository;
 
-    public TransactionController(TransactionRepository repository) {
+    public TransactionController(TransactionLogRepository repository) {
         this.repository = repository;
     }
 
