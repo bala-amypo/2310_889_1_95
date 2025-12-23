@@ -1,14 +1,11 @@
 package com.example.demo.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.demo.model.BudgetSummary;
-import java.util.*;
+import com.example.demo.model.BudgetPlan;
 
-public class BudgetSummaryRepository {
-    private final Map<Long, BudgetSummary> store = new HashMap<>();
+import java.util.Optional;
 
-    public BudgetSummary save(BudgetSummary b) { store.put(b.getId(), b); return b; }
-    public BudgetSummary findById(Long id) { return store.get(id); }
-    public List<BudgetSummary> findAll() { return new ArrayList<>(store.values()); }
-    public BudgetSummary update(Long id, BudgetSummary b) { store.put(id, b); return b; }
-    public void deleteById(Long id) { store.remove(id); }
+public interface BudgetSummaryRepository extends JpaRepository<BudgetSummary, Long> {
+    Optional<BudgetSummary> findByBudgetPlan(BudgetPlan plan);
 }
