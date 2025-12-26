@@ -7,20 +7,44 @@ import java.time.LocalDateTime;
 @Table(name = "budget_summaries")
 public class BudgetSummary {
 
+    public static final String STATUS_UNDER_LIMIT = "UNDER_LIMIT";
+    public static final String STATUS_OVER_LIMIT = "OVER_LIMIT";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "budget_plan_id")
+    @JoinColumn(name = "budget_plan_id", nullable = false)
     private BudgetPlan budgetPlan;
 
     private Double totalIncome;
+
     private Double totalExpense;
+
     private String status;
+
     private LocalDateTime generatedAt;
 
-    public BudgetSummary() {}
+    public BudgetSummary() {
+    }
+
+    public BudgetSummary(Long id, BudgetPlan budgetPlan, Double totalIncome, Double totalExpense, String status,
+            LocalDateTime generatedAt) {
+        this.id = id;
+        this.budgetPlan = budgetPlan;
+        this.totalIncome = totalIncome;
+        this.totalExpense = totalExpense;
+        this.status = status;
+        this.generatedAt = generatedAt;
+    }
+
+    @PrePersist
+    public void onCreate() {
+        if (generatedAt == null) {
+            generatedAt = LocalDateTime.now();
+        }
+    }
 
     public Long getId() {
         return id;

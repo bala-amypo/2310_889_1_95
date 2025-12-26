@@ -1,10 +1,15 @@
 package com.example.demo.model;
 
+import com.example.demo.exception.BadRequestException;
 import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "categories")
 public class Category {
+
+    public static final String TYPE_INCOME = "INCOME";
+    public static final String TYPE_EXPENSE = "EXPENSE";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,7 +20,23 @@ public class Category {
 
     private String type;
 
-    public Category() {}
+    @OneToMany(mappedBy = "category")
+    private List<TransactionLog> transactionLogs;
+
+    public Category() {
+    }
+
+    public Category(Long id, String name, String type) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+    }
+
+    public void validateType() {
+        if (!TYPE_INCOME.equals(type) && !TYPE_EXPENSE.equals(type)) {
+            throw new BadRequestException("Invalid category type: " + type);
+        }
+    }
 
     public Long getId() {
         return id;
@@ -39,5 +60,13 @@ public class Category {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public List<TransactionLog> getTransactionLogs() {
+        return transactionLogs;
+    }
+
+    public void setTransactionLogs(List<TransactionLog> transactionLogs) {
+        this.transactionLogs = transactionLogs;
     }
 }

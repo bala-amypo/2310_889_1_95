@@ -1,9 +1,10 @@
 package com.example.demo.service;
 
-import java.util.List;
 import com.example.demo.model.Category;
+import java.util.List;
 
 public interface CategoryService {
-    Category create(Category category);
-    List<Category> getAll();
+    Category addCategory(Category category);
+
+    List<Category> getAllCategories();
 }

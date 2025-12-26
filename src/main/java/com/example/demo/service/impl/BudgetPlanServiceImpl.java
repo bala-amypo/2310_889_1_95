@@ -1,5 +1,6 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.exception.BadRequestException;
 import com.example.demo.model.BudgetPlan;
 import com.example.demo.model.User;
 import com.example.demo.repository.BudgetPlanRepository;
@@ -10,26 +11,32 @@ import org.springframework.stereotype.Service;
 @Service
 public class BudgetPlanServiceImpl implements BudgetPlanService {
 
-    private final BudgetPlanRepository repo;
-    private final UserRepository userRepo;
+    private final BudgetPlanRepository budgetPlanRepository;
+    private final UserRepository userRepository;
 
-    public BudgetPlanServiceImpl(BudgetPlanRepository repo,
-                                 UserRepository userRepo) {
-        this.repo = repo;
-        this.userRepo = userRepo;
+    public BudgetPlanServiceImpl(BudgetPlanRepository budgetPlanRepository, UserRepository userRepository) {
+        this.budgetPlanRepository = budgetPlanRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
-    public BudgetPlan create(Long userId, BudgetPlan plan) {
-        User user = userRepo.findById(userId).orElse(null);
+    public BudgetPlan createBudgetPlan(Long userId, BudgetPlan plan) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
         plan.setUser(user);
-        return repo.save(plan);
+        plan.validate();
+
+        if (budgetPlanRepository.findByUserAndMonthAndYear(user, plan.getMonth(), plan.getYear()).isPresent()) {
+            throw new BadRequestException("Budget plan already exists for this period");
+        }
+
+        return budgetPlanRepository.save(plan);
     }
 
     @Override
-    public BudgetPlan get(Long userId, Integer month, Integer year) {
-        return repo
-                .findByUserIdAndMonthAndYear(userId, month, year)
-                .orElse(null);
+    public BudgetPlan getBudgetPlan(Long userId, Integer month, Integer year) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return budgetPlanRepository.findByUserAndMonthAndYear(user, month, year).orElse(null);
     }
 }

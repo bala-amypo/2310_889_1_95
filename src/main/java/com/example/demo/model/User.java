@@ -1,21 +1,44 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
 public class User {
+
+    public static final String ROLE_USER = "USER";
+    public static final String ROLE_ADMIN = "ADMIN";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
-    private String email;
-    private String password;
-    private String role = "USER";
 
-    public User() {}
+    @Column(unique = true)
+    private String email;
+
+    private String password;
+
+    private String role;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TransactionLog> transactionLogs;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BudgetPlan> budgetPlans;
+
+    public User() {
+    }
+
+    public User(Long id, String name, String email, String password, String role) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
 
     public Long getId() {
         return id;
@@ -55,5 +78,21 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public List<TransactionLog> getTransactionLogs() {
+        return transactionLogs;
+    }
+
+    public void setTransactionLogs(List<TransactionLog> transactionLogs) {
+        this.transactionLogs = transactionLogs;
+    }
+
+    public List<BudgetPlan> getBudgetPlans() {
+        return budgetPlans;
+    }
+
+    public void setBudgetPlans(List<BudgetPlan> budgetPlans) {
+        this.budgetPlans = budgetPlans;
     }
 }

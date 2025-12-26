@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import com.example.demo.exception.BadRequestException;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
@@ -12,20 +13,41 @@ public class TransactionLog {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
     private Double amount;
+
     private String description;
+
     private LocalDate transactionDate;
 
-    public TransactionLog() {}
+    public TransactionLog() {
+    }
 
-    // getters & setters
+    public TransactionLog(Long id, User user, Category category, Double amount, String description,
+            LocalDate transactionDate) {
+        this.id = id;
+        this.user = user;
+        this.category = category;
+        this.amount = amount;
+        this.description = description;
+        this.transactionDate = transactionDate;
+    }
+
+    public void validate() {
+        if (amount == null || amount <= 0) {
+            throw new BadRequestException("Amount must be strictly greater than 0");
+        }
+        if (transactionDate != null && transactionDate.isAfter(LocalDate.now())) {
+            throw new BadRequestException("Transaction date must not be in the future");
+        }
+    }
+
     public Long getId() {
         return id;
     }
