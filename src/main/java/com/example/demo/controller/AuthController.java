@@ -1,42 +1,66 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.AuthResponse;
+import com.example.demo.dto.LoginRequest;
+import com.example.demo.dto.RegisterRequest;
 import com.example.demo.model.User;
-import com.example.demo.repository.UserRepository;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
+import com.example.demo.security.JwtTokenProvider;
+import com.example.demo.service.UserService;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final UserRepository userRepo;
+    private final UserService userService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider tokenProvider;
 
-    public AuthController(UserRepository userRepo) {
-        this.userRepo = userRepo;
+    public AuthController(UserService userService, AuthenticationManager authenticationManager,
+            JwtTokenProvider tokenProvider) {
+        this.userService = userService;
+        this.authenticationManager = authenticationManager;
+        this.tokenProvider = tokenProvider;
     }
 
     @PostMapping("/register")
-    public User register(@RequestBody User user) {
-        return userRepo.save(user);
+    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
+        User user = new User(null, request.getName(), request.getEmail(), request.getPassword(), null);
+        User registeredUser = userService.register(user);
+
+        // Auto-login after register or just return user details?
+        // Spec says "returns an appropriate response (for example, AuthResponse)."
+        // Usually register returns the registered user or a token. Let's return token
+        // similar to login.
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String token = tokenProvider.generateToken(authentication, registeredUser.getId(), registeredUser.getEmail(),
+                registeredUser.getRole());
+
+        return ResponseEntity.ok(
+                new AuthResponse(token, registeredUser.getId(), registeredUser.getEmail(), registeredUser.getRole()));
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody User loginRequest) {
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        Optional<User> userOpt =
-                userRepo.findByEmail(loginRequest.getEmail());
+        User user = userService.findByEmail(request.getEmail());
+        String token = tokenProvider.generateToken(authentication, user.getId(), user.getEmail(), user.getRole());
 
-        if (userOpt.isEmpty()) {
-            return "User not found";
-        }
-
-        User user = userOpt.get();
-
-        if (!user.getPassword().equals(loginRequest.getPassword())) {
-            return "Invalid password";
-        }
-
-        return "Login successful";
+        return ResponseEntity.ok(new AuthResponse(token, user.getId(), user.getEmail(), user.getRole()));
     }
 }

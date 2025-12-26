@@ -1,9 +1,8 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.TransactionLog;
-import com.example.demo.model.User;
-import com.example.demo.repository.TransactionLogRepository;
-import com.example.demo.repository.UserRepository;
+import com.example.demo.service.TransactionService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,27 +11,19 @@ import java.util.List;
 @RequestMapping("/transactions")
 public class TransactionController {
 
-    private final TransactionLogRepository transactionRepo;
-    private final UserRepository userRepo;
+    private final TransactionService transactionService;
 
-    public TransactionController(TransactionLogRepository transactionRepo,
-                                 UserRepository userRepo) {
-        this.transactionRepo = transactionRepo;
-        this.userRepo = userRepo;
+    public TransactionController(TransactionService transactionService) {
+        this.transactionService = transactionService;
     }
 
     @PostMapping("/{userId}")
-    public TransactionLog create(@PathVariable Long userId,
-                                 @RequestBody TransactionLog log) {
-
-        User user = userRepo.findById(userId).orElse(null);
-        log.setUser(user);
-        return transactionRepo.save(log);
+    public ResponseEntity<TransactionLog> addTransaction(@PathVariable Long userId, @RequestBody TransactionLog log) {
+        return ResponseEntity.ok(transactionService.addTransaction(userId, log));
     }
 
     @GetMapping("/user/{userId}")
-    public List<TransactionLog> getByUser(@PathVariable Long userId) {
-        User user = userRepo.findById(userId).orElse(null);
-        return transactionRepo.findByUser(user);
+    public ResponseEntity<List<TransactionLog>> getUserTransactions(@PathVariable Long userId) {
+        return ResponseEntity.ok(transactionService.getUserTransactions(userId));
     }
 }

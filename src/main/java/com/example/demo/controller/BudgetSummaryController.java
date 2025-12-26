@@ -1,39 +1,27 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.BudgetPlan;
 import com.example.demo.model.BudgetSummary;
-import com.example.demo.repository.BudgetPlanRepository;
-import com.example.demo.repository.BudgetSummaryRepository;
+import com.example.demo.service.BudgetSummaryService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/summary")
 public class BudgetSummaryController {
 
-    private final BudgetSummaryRepository summaryRepo;
-    private final BudgetPlanRepository planRepo;
+    private final BudgetSummaryService budgetSummaryService;
 
-    public BudgetSummaryController(BudgetSummaryRepository summaryRepo,
-                                   BudgetPlanRepository planRepo) {
-        this.summaryRepo = summaryRepo;
-        this.planRepo = planRepo;
+    public BudgetSummaryController(BudgetSummaryService budgetSummaryService) {
+        this.budgetSummaryService = budgetSummaryService;
     }
 
     @PostMapping("/generate/{budgetPlanId}")
-    public BudgetSummary generate(@PathVariable Long budgetPlanId) {
-
-        BudgetPlan plan = planRepo.findById(budgetPlanId).orElse(null);
-
-        BudgetSummary summary = new BudgetSummary();
-        summary.setBudgetPlan(plan);
-
-        return summaryRepo.save(summary);
+    public ResponseEntity<BudgetSummary> generateSummary(@PathVariable Long budgetPlanId) {
+        return ResponseEntity.ok(budgetSummaryService.generateSummary(budgetPlanId));
     }
 
     @GetMapping("/{budgetPlanId}")
-    public BudgetSummary get(@PathVariable Long budgetPlanId) {
-        return summaryRepo
-                .findByBudgetPlanId(budgetPlanId)
-                .orElse(null);
+    public ResponseEntity<BudgetSummary> getSummary(@PathVariable Long budgetPlanId) {
+        return ResponseEntity.ok(budgetSummaryService.getSummary(budgetPlanId));
     }
 }

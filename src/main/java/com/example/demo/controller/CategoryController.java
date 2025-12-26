@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Category;
-import com.example.demo.repository.CategoryRepository;
+import com.example.demo.service.CategoryService;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,19 +12,19 @@ import java.util.List;
 @RequestMapping("/categories")
 public class CategoryController {
 
-    private final CategoryRepository repo;
+    private final CategoryService categoryService;
 
-    public CategoryController(CategoryRepository repo) {
-        this.repo = repo;
+    public CategoryController(CategoryService categoryService) {
+        this.categoryService = categoryService;
     }
 
     @PostMapping
-    public Category create(@RequestBody Category category) {
-        return repo.save(category);
+    public ResponseEntity<Category> addCategory(@RequestBody Category category) {
+        return ResponseEntity.ok(categoryService.addCategory(category));
     }
 
     @GetMapping
-    public List<Category> getAll() {
-        return repo.findAll();
+    public ResponseEntity<List<Category>> getAllCategories() {
+        return ResponseEntity.ok(categoryService.getAllCategories());
     }
 }

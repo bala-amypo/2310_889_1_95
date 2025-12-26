@@ -1,41 +1,28 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.BudgetPlan;
-import com.example.demo.model.User;
-import com.example.demo.repository.BudgetPlanRepository;
-import com.example.demo.repository.UserRepository;
+import com.example.demo.service.BudgetPlanService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/budgets")
 public class BudgetPlanController {
 
-    private final BudgetPlanRepository repo;
-    private final UserRepository userRepo;
+    private final BudgetPlanService budgetPlanService;
 
-    public BudgetPlanController(BudgetPlanRepository repo,
-                                UserRepository userRepo) {
-        this.repo = repo;
-        this.userRepo = userRepo;
+    public BudgetPlanController(BudgetPlanService budgetPlanService) {
+        this.budgetPlanService = budgetPlanService;
     }
 
     @PostMapping("/{userId}")
-    public BudgetPlan create(@PathVariable Long userId,
-                             @RequestBody BudgetPlan plan) {
-
-        User user = userRepo.findById(userId).orElse(null);
-        plan.setUser(user);
-        return repo.save(plan);
+    public ResponseEntity<BudgetPlan> createBudgetPlan(@PathVariable Long userId, @RequestBody BudgetPlan plan) {
+        return ResponseEntity.ok(budgetPlanService.createBudgetPlan(userId, plan));
     }
 
     @GetMapping("/{userId}/{month}/{year}")
-    public BudgetPlan get(
-            @PathVariable Long userId,
-            @PathVariable int month,
-            @PathVariable int year) {
-
-        return repo
-                .findByUserIdAndMonthAndYear(userId, month, year)
-                .orElse(null);
+    public ResponseEntity<BudgetPlan> getBudgetPlan(@PathVariable Long userId, @PathVariable Integer month,
+            @PathVariable Integer year) {
+        return ResponseEntity.ok(budgetPlanService.getBudgetPlan(userId, month, year));
     }
 }
