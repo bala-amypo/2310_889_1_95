@@ -1,26 +1,33 @@
 package com.example.demo.service.impl;
 
-import org.springframework.stereotype.Service;
-import java.util.List;
-
-import com.example.demo.repository.CategoryRepository;
+import com.example.demo.exception.BadRequestException;
 import com.example.demo.model.Category;
+import com.example.demo.repository.CategoryRepository;
 import com.example.demo.service.CategoryService;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
-    private final CategoryRepository repo;
+    private final CategoryRepository categoryRepository;
 
-    public CategoryServiceImpl(CategoryRepository repo) {
-        this.repo = repo;
+    public CategoryServiceImpl(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
     }
 
-    public Category create(Category category) {
-        return repo.save(category);
+    @Override
+    public Category addCategory(Category category) {
+        if (categoryRepository.existsByName(category.getName())) {
+            throw new BadRequestException("Category already exists: " + category.getName());
+        }
+        category.validateType();
+        return categoryRepository.save(category);
     }
 
-    public List<Category> getAll() {
-        return repo.findAll();
+    @Override
+    public List<Category> getAllCategories() {
+        return categoryRepository.findAll();
     }
 }

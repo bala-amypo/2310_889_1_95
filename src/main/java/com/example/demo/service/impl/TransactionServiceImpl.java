@@ -1,31 +1,38 @@
 package com.example.demo.service.impl;
 
-import org.springframework.stereotype.Service;
-import java.util.List;
-
-import com.example.demo.repository.*;
-import com.example.demo.model.*;
+import com.example.demo.model.TransactionLog;
+import com.example.demo.model.User;
+import com.example.demo.repository.TransactionLogRepository;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.service.TransactionService;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
 
-    private final TransactionLogRepository repo;
-    private final UserRepository userRepo;
+    private final TransactionLogRepository transactionLogRepository;
+    private final UserRepository userRepository;
 
-    public TransactionServiceImpl(TransactionLogRepository repo, UserRepository userRepo) {
-        this.repo = repo;
-        this.userRepo = userRepo;
+    public TransactionServiceImpl(TransactionLogRepository transactionLogRepository, UserRepository userRepository) {
+        this.transactionLogRepository = transactionLogRepository;
+        this.userRepository = userRepository;
     }
 
-    public TransactionLog add(Long userId, TransactionLog log) {
-        User user = userRepo.findById(userId).orElseThrow();
+    @Override
+    public TransactionLog addTransaction(Long userId, TransactionLog log) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
         log.setUser(user);
-        return repo.save(log);
+        log.validate();
+        return transactionLogRepository.save(log);
     }
 
-    public List<TransactionLog> getByUser(Long userId) {
-        User user = userRepo.findById(userId).orElseThrow();
-        return repo.findByUser(user);
+    @Override
+    public List<TransactionLog> getUserTransactions(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return transactionLogRepository.findByUser(user);
     }
 }
