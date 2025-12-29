@@ -37,13 +37,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/hello-servlet").permitAll() // Keep servlet unprotected for basic tests if
-                                                                       // needed, or protect? Requirement says "finance
-                                                                       // APIs require a valid JWT". Servlet is at
-                                                                       // /hello-servlet, likely should be public or
-                                                                       // tested separately. Test t1_servletHello
-                                                                       // suggests simple get. Let's make it public to
-                                                                       // avoid auth issues in test.
+                        .requestMatchers("/hello-servlet").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider())
