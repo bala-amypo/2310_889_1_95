@@ -37,11 +37,6 @@ public class AuthController {
         User user = new User(null, request.getName(), request.getEmail(), request.getPassword(), null);
         User registeredUser = userService.register(user);
 
-        // Auto-login after register or just return user details?
-        // Spec says "returns an appropriate response (for example, AuthResponse)."
-        // Usually register returns the registered user or a token. Let's return token
-        // similar to login.
-
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
